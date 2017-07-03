@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>省市县三级联动</title>
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+    <script>
+        $(function () {
+            //查询所有省级地区的信息
+            $.get('/prov/', function (data) {
+                //alert(data.data);
+                //遍历出每一个地区的信息并追加到prov下拉列表框中
+                $.each(data.data, function (index, item) {
+                    // item是data字典中每一项列表的键和值
+                    // item[0]是每一项列表的键
+                    //item[1]是每一项列表的值
+                    opt = '<option value="' + item[0] + '">' + item[1] + '</option>';
+                    $('#prov').append(opt)
+                })
+            });
+
+            $('#prov').change(function () {
+                //查询当前省下的市级地区信息
+                $('#city').empty().append('<option>---请选择市---</option>');
+                $('#dis').empty().append('<option>---请选择县---</option>');
+                $.get('/city' + $(this).val() + '/', function (data) {
+                    $.each(data.data, function (index, item) {
+                        opt = '<option value="' + item[0] + '">' + item[1] + '</option>';
+                        $('#city').append(opt)
+                    })
+                })
+            });
+
+            $('#city').change(function () {
+                $('#dis').empty().append('<option>---请选择县---</option>');
+                //查询当前市下的县级地区
+                $.get('/city' + $(this).val() + '/', function (data) {
+                    $.each(data.data, function (index, item) {
+                        opt = '<option value="' + item[0] + '">' + item[1] + '</option>';
+                        $('#dis').append(opt)
+                    })
+                })
+            })
+        })
+    </script>
+</head>
+<body>
+<select id="prov">
+    <option>---请选择省---</option>
+</select>
+<select id="city">
+    <option>---请选择市---</option>
+</select>
+<select id="dis">
+    <option>---请选择县---</option>
+</select>
+</body>
+</html>
